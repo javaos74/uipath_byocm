@@ -17,7 +17,7 @@ docker build -t "${IMAGE_NAME}" "${SCRIPT_DIR}"
 echo "Starting ${CONTAINER_NAME}..."
 docker run -d \
   --name "${CONTAINER_NAME}" \
-  -p 80:8080 \
+  -p 8080:8080 \
   "${IMAGE_NAME}"
 
 echo "Running at http://localhost"
