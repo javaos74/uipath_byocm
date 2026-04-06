@@ -43,9 +43,14 @@ UiPath BYOCM은 등록 시 `/v1/models`, `/v1/chat/completions`, `/v1/embeddings
 | `parallel_tool_calls` | 키 제거 | 해당 파라미터 미지원 |
 | `tool_choice` | `"required"`로 강제 설정 | 특정 `tool_choice` 값 미지원 |
 
+소스 코드는 `on-premise-llm/` 디렉토리에 있습니다. 자세한 내용은 [on-premise-llm/README.md](on-premise-llm/README.md)를 참고하세요.
+
 ## 실행
 
 ```bash
+# on-premise-llm 디렉토리에서
+cd on-premise-llm
+
 # Docker 이미지 빌드 및 Docker Hub push
 ./build-docker-image.sh
 
