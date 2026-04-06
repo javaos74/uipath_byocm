@@ -18,6 +18,7 @@ const config: ProxyConfig = {
 const transformOpts: TransformOptions = {
   overrides: [
     { action: 'remove', key: 'parallel_tool_calls' },
+    { action: 'set', key: 'tool_choice', value: 'required' },
   ],
 };
 
@@ -34,6 +35,11 @@ router.use((req, _res, next) => {
 
 // /upstage/v1/models - 모델 목록 조회 (body 변환 없이 그대로 프록시)
 router.all('/v1/models', (req, res) => {
+  proxyRequest(config, req, res, req.body);
+});
+
+// /upstage/v1/embeddings - 임베딩 (body 변환 없이 그대로 프록시)
+router.all('/v1/embeddings', (req, res) => {
   proxyRequest(config, req, res, req.body);
 });
 

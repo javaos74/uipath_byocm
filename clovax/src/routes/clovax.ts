@@ -31,6 +31,11 @@ router.all('/v1/models', (req, res) => {
   proxyRequest(config, req, res, req.body);
 });
 
+// /clovax/v1/embeddings - 임베딩 (body 변환 없이 그대로 프록시)
+router.all('/v1/embeddings', (req, res) => {
+  proxyRequest(config, req, res, req.body);
+});
+
 // /clovax/v1/chat/completions - 채팅 완성 (body 변환 적용)
 router.all('/v1/chat/completions', (req, res) => {
   const body = clovaxTransform(req.body);
