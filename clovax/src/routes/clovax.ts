@@ -2,6 +2,7 @@
 
 import { Router } from 'express';
 import { proxyRequest, transformBody } from '../utils/proxy';
+import { logger } from '../utils/logger';
 import type { ProxyConfig, TransformOptions, BodyTransformer } from '../types';
 
 const router = Router();
@@ -25,6 +26,15 @@ const transformOpts: TransformOptions = {
 // Clovax 전용 body 변환 함수
 const clovaxTransform: BodyTransformer = (rawBody) =>
   transformBody(rawBody, transformOpts);
+
+// 요청 로깅 미들웨어
+router.use((req, _res, next) => {
+  logger.info(`[ClovaX] ${req.method} ${req.originalUrl}`);
+  if (Buffer.isBuffer(req.body) && req.body.length > 0) {
+    logger.debug(`[ClovaX] request body: ${req.body.toString()}`);
+  }
+  next();
+});
 
 // /clovax/v1/models - 모델 목록 조회 (body 변환 없이 그대로 프록시)
 router.all('/v1/models', (req, res) => {

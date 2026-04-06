@@ -2,6 +2,7 @@
 
 import { Router } from 'express';
 import { proxyRequest, transformBody } from '../utils/proxy';
+import { logger } from '../utils/logger';
 import type { ProxyConfig, TransformOptions, BodyTransformer } from '../types';
 
 const router = Router();
@@ -28,8 +29,10 @@ const upstageTransform: BodyTransformer = (rawBody) =>
 
 // 요청 로깅 미들웨어
 router.use((req, _res, next) => {
-  const body = Buffer.isBuffer(req.body) ? req.body.toString() : '';
-  console.log(`[Upstage] ${req.method} ${req.originalUrl}${body ? ` body=${body}` : ''}`);
+  logger.info(`[Upstage] ${req.method} ${req.originalUrl}`);
+  if (Buffer.isBuffer(req.body) && req.body.length > 0) {
+    logger.debug(`[Upstage] request body: ${req.body.toString()}`);
+  }
   next();
 });
 

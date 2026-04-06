@@ -1,6 +1,6 @@
 {
   "name": "clovax-proxy",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Express + TypeScript 기반 LLM 프록시 서버",
   "main": "dist/app.js",
   "scripts": {

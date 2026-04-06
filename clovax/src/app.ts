@@ -3,6 +3,7 @@
 import express from 'express';
 import https from 'https';
 import fs from 'fs';
+import { logger } from './utils/logger';
 import { clovaxRouter } from './routes/clovax';
 import { upstageRouter } from './routes/upstage';
 
@@ -28,15 +29,15 @@ if (tlsCert && tlsKey) {
       key: fs.readFileSync(tlsKey),
     };
     https.createServer(tlsOptions, app).listen(PORT, () => {
-      console.log(`HTTPS 프록시 서버 실행 중: :${PORT}`);
+      logger.info(`HTTPS 프록시 서버 실행 중: :${PORT}`);
     });
   } catch (err) {
-    console.error('TLS 인증서 파일 읽기 실패:', err);
+    logger.error('TLS 인증서 파일 읽기 실패:', err);
     process.exit(1);
   }
 } else {
   // HTTP 서버 기동 (기본)
   app.listen(PORT, () => {
-    console.log(`HTTP 프록시 서버 실행 중: :${PORT}`);
+    logger.info(`HTTP 프록시 서버 실행 중: :${PORT}`);
   });
 }
