@@ -1,0 +1,23 @@
+{
+  "name": "clovax-proxy",
+  "version": "1.0.0",
+  "description": "Express + TypeScript 기반 LLM 프록시 서버",
+  "main": "dist/app.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "dev": "tsx src/app.ts",
+    "test": "vitest --run"
+  },
+  "dependencies": {
+    "express": "^4.21.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "vitest": "^2.1.0",
+    "fast-check": "^3.22.0"
+  }
+}
