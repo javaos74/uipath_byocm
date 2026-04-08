@@ -6,6 +6,7 @@ import fs from 'fs';
 import { logger } from './utils/logger';
 import { clovaxRouter } from './routes/clovax';
 import { upstageRouter } from './routes/upstage';
+import { exaoneRouter } from './routes/exaone';
 
 const app = express();
 const PORT = process.env.PORT || 8080;
@@ -16,6 +17,7 @@ app.use(express.raw({ type: '*/*', limit: '10mb' }));
 // 라우터 마운트
 app.use('/clovax', clovaxRouter);
 app.use('/upstage', upstageRouter);
+app.use('/exaone', exaoneRouter);
 
 // TLS 환경변수 확인
 const tlsCert = process.env.TLS_CERT;

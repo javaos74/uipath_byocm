@@ -48,18 +48,23 @@ export function transformBody(rawBody: Buffer, options: TransformOptions): Buffe
   }
 }
 
+// 프록시 응답 콜백 타입
+export type ProxyResponseCallback = (statusCode: number, responseBody: string) => void;
+
 /**
  * 대상 서버로 HTTPS 프록시 요청을 전송합니다.
  * - host 헤더를 config.hostname으로 교체
  * - content-length를 body 길이로 갱신
  * - 대상 서버 응답을 pipe()로 클라이언트에 스트리밍 전달
  * - 에러 발생 시 502 Bad Gateway 반환 (헤더 미전송 시), 헤더 전송 완료 시 연결 종료
+ * - onResponse 콜백이 제공되면 응답 완료 후 상태 코드와 body를 전달
  */
 export function proxyRequest(
   config: ProxyConfig,
   req: Request,
   res: Response,
-  body: Buffer
+  body: Buffer,
+  onResponse?: ProxyResponseCallback
 ): void {
   // body가 Buffer가 아닌 경우 빈 Buffer로 대체 (GET 요청 등 body 없는 경우)
   const safeBody = Buffer.isBuffer(body) ? body : Buffer.alloc(0);
@@ -80,8 +85,23 @@ export function proxyRequest(
     (proxyRes) => {
       // 대상 서버의 상태 코드와 헤더를 클라이언트에 전달
       res.writeHead(proxyRes.statusCode!, proxyRes.headers);
-      // 응답 본문을 버퍼링 없이 스트리밍 전달
-      proxyRes.pipe(res);
+
+      if (onResponse) {
+        // 응답 로깅이 필요한 경우: 데이터를 수집하면서 클라이언트에도 전달
+        const chunks: Buffer[] = [];
+        proxyRes.on('data', (chunk: Buffer) => {
+          chunks.push(chunk);
+          res.write(chunk);
+        });
+        proxyRes.on('end', () => {
+          res.end();
+          const responseBody = Buffer.concat(chunks).toString();
+          onResponse(proxyRes.statusCode!, responseBody);
+        });
+      } else {
+        // 응답 로깅 불필요: pipe()로 직접 스트리밍
+        proxyRes.pipe(res);
+      }
     }
   );
 

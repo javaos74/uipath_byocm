@@ -2,6 +2,7 @@
 
 import { Router } from 'express';
 import { proxyRequest, transformBody } from '../utils/proxy';
+import type { ProxyResponseCallback } from '../utils/proxy';
 import { logger } from '../utils/logger';
 import type { ProxyConfig, TransformOptions, BodyTransformer } from '../types';
 
@@ -36,20 +37,26 @@ router.use((req, _res, next) => {
   next();
 });
 
+// 응답 로깅 콜백
+const logResponse: ProxyResponseCallback = (statusCode, responseBody) => {
+  logger.info(`[Upstage] response status: ${statusCode}`);
+  logger.debug(`[Upstage] response body: ${responseBody}`);
+};
+
 // /upstage/v1/models - 모델 목록 조회 (body 변환 없이 그대로 프록시)
 router.all('/v1/models', (req, res) => {
-  proxyRequest(config, req, res, req.body);
+  proxyRequest(config, req, res, req.body, logResponse);
 });
 
 // /upstage/v1/embeddings - 임베딩 (body 변환 없이 그대로 프록시)
 router.all('/v1/embeddings', (req, res) => {
-  proxyRequest(config, req, res, req.body);
+  proxyRequest(config, req, res, req.body, logResponse);
 });
 
 // /upstage/v1/chat/completions - 채팅 완성 (body 변환 적용)
 router.all('/v1/chat/completions', (req, res) => {
   const body = upstageTransform(req.body);
-  proxyRequest(config, req, res, body);
+  proxyRequest(config, req, res, body, logResponse);
 });
 
 export { router as upstageRouter };
